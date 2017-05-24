@@ -1,0 +1,57 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "react-native"
+    ],
+    "extends": [
+        "eslint:all",
+        "plugin:react/all",
+        "plugin:react-native/all"
+    ],
+    "rules": {
+        "no-const-assign": "warn",
+        "no-this-before-super": "warn",
+        "no-undef": "warn",
+        "no-unreachable": "warn",
+        "no-unused-vars": "warn",
+        "constructor-super": "warn",
+        "valid-typeof": "warn",
+        "quotes": ["error", "single"],
+        "sort-imports": "off",
+        "sort-keys": "off",
+        "quote-props": ["error", "as-needed"],
+        "one-var": ["error", "never"],
+        "object-curly-newline": ["error", {
+            "ObjectExpression": {
+                "minProperties": 1
+            }
+        }],
+        "max-len": "off",
+        "padded-blocks": "off",
+        "arrow-body-style": "off",
+        "no-use-before-define": "warn",
+        "no-extra-parens": "off",
+        "no-ternary": "off",
+        "no-magic-numbers": "warn",
+        "react/no-deprecated": "off",
+        "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
+        "react/forbid-component-props": "off",
+        "react/jsx-sort-props": "off",
+        "react/jsx-closing-bracket-location": ["warn", "after-props"],
+        "react/sort-prop-types": "off",
+        "react/require-default-props": "warn"
+    }
+}
