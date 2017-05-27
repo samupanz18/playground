@@ -1,5 +1,7 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
+const data = require('./data');
 
 const PATHS = {
     src: path.join(__dirname, 'src'),
@@ -7,10 +9,11 @@ const PATHS = {
 };
 
 module.exports = {
-    entry: PATHS.src,
+    entry: path.join(PATHS.src, 'router'),
     output: {
         path: PATHS.build,
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        libraryTarget: 'umd'
     },
     module: {
         loaders: [{
@@ -24,6 +27,7 @@ module.exports = {
         }]
     },
     plugins: [
-        new ExtractTextPlugin("styles.css")
+        new ExtractTextPlugin("styles.css"),
+        new StaticSiteGeneratorPlugin('main', data.routes, data)
     ]
 };
