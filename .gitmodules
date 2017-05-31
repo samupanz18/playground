@@ -1,0 +1,3 @@
+[submodule "web/play-react/react-router-tutorial"]
+	path = web/play-react/react-router-tutorial
+	url = https://github.com/reactjs/react-router-tutorial
