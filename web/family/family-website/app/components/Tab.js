@@ -4,14 +4,14 @@ import _ from 'lodash';
 
 export default class Tab extends Component {
     static propTypes = {
-        starProfiles: PropTypes.array,
+        members: PropTypes.array,
     }
     render() {
         const items = [];
-        const {starProfiles} = this.props;
-        _.each(starProfiles, (starProfile) => {
+        const {members} = this.props;
+        _.each(members, (member) => {
             items.push(
-                <li>{starProfile.name}</li>
+                <li>{member.name}</li>
             );
         });
 

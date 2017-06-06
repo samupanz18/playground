@@ -19,8 +19,8 @@ const commonConfig = merge([
         },
         plugins: [
             new HtmlWebpackPlugin({
-                title: 'Star Profile',
-                template: './app/templates/index.ejs'
+                title: 'Family',
+                template: './app/templates/index.ejs',
             }),
         ],
     },

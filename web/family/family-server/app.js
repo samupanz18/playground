@@ -1,18 +1,15 @@
 const express = require('express');
 const app = express();
 
-const starProfiles = [{
+const members = [{
     id: 1,
-    name: 'Leonardo DiCaprio'
+    name: 'Samuel Gong'
 }, {
     id: 2,
-    name: 'Tom Cruise'
+    name: 'Helen Chen'
 }, {
     id: 3,
-    name: 'Kate Winslet'
-}, {
-    id: 4,
-    name: 'Nicole Kidman'
+    name: 'Edwin Gong'
 }];
 
 app.use(function (req, res, next) {
@@ -22,11 +19,11 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', function(req, res) {
-    res.end('Hello, I\'m Star Profile Server!');
+    res.end('Hello, I\'m Family Server!');
 });
 
-app.get('/list', (req, res) => {
-    res.send(JSON.stringify(starProfiles));
+app.get('/listMembers', (req, res) => {
+    res.send(JSON.stringify(members));
 });
 
 app.listen(3000, function() {

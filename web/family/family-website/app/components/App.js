@@ -6,29 +6,28 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-            starProfiles: [],
+            members: [],
         };
     }
     componentWillMount() {
-        fetch('http://127.0.0.1:3000/list', {
+        fetch('http://127.0.0.1:3000/listMembers', {
             method: 'GET',
-            // mode: 'no-cors',
         }).then((response) => {
             return response.json();
-        }).then((starProfiles) => {
+        }).then((members) => {
             this.setState({
-                starProfiles,
+                members,
             });
         }).catch((error) => {
             console.log(error.message);
         });
     }
     render() {
-        const {starProfiles} = this.state;
+        const {members} = this.state;
 
         return (
             <div>
-                <Tab starProfiles={starProfiles}/>
+                <Tab members={members}/>
             </div>
         );
     }
