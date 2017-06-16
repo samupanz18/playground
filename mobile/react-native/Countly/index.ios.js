@@ -12,6 +12,7 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
+import {Provider} from 'react-redux';
 import {increment, decrement, zero} from './src/actions';
 import store from './src/store';
 
@@ -29,22 +30,24 @@ export default class Countly extends Component {
     }
     render() {
         return (
-            <View style={styles.container}>
-                <Text style={styles.appName}>Countly</Text>
-                <Text style={styles.tally}>Tally: {this.state.tally.count}</Text>
-                <TouchableOpacity style={styles.button}
-                    onPress={() => {store.dispatch(increment())}}>
-                    <Text style={styles.buttonText}>+</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}
-                    onPress={() => {store.dispatch(decrement())}}>
-                    <Text style={styles.buttonText}>-</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}
-                    onPress={() => {store.dispatch(zero())}}>
-                    <Text style={styles.buttonText}>0</Text>
-                </TouchableOpacity>
-            </View>
+            <Provider store={store}>
+                <View style={styles.container}>
+                    <Text style={styles.appName}>Countly</Text>
+                    <Text style={styles.tally}>Tally: {this.state.tally.count}</Text>
+                    <TouchableOpacity style={styles.button}
+                        onPress={() => {store.dispatch(increment())}}>
+                        <Text style={styles.buttonText}>+</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}
+                        onPress={() => {store.dispatch(decrement())}}>
+                        <Text style={styles.buttonText}>-</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}
+                        onPress={() => {store.dispatch(zero())}}>
+                        <Text style={styles.buttonText}>0</Text>
+                    </TouchableOpacity>
+                </View>
+            </Provider>
         );
     }
     componentWillUnmount() {
