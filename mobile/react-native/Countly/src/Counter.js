@@ -5,14 +5,11 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
-import {Provider} from 'react-redux';
-import {increment, decrement, zero} from './src/actions';
-import store from './src/store';
 
 const Counter = (props) => (
     <View style={styles.container}>
         <Text style={styles.appName}>Countly</Text>
-        <Text style={styles.tally}>Tally: {this.props.count}</Text>
+        <Text style={styles.tally}>Tally: {props.count}</Text>
         <TouchableOpacity style={styles.button}
             onPress={props.increment}>
             <Text style={styles.buttonText}>+</Text>
