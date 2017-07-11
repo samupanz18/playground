@@ -6,48 +6,31 @@
 
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
+    AppRegistry,
 } from 'react-native';
+import {Provider, connect} from 'react-redux';
+import {increment, decrement, zero} from './src/actions';
+import store from './src/store';
+import Counter from './src/Counter';
+
+const mapStateToProps = state => ({
+    count: state.count,
+});
+const mapDispatchToProps = dispatch => ({
+    increment: () => {dispatch(increment())},
+    decrement: () => {dispatch(decrement())},
+    zero: () => {dispatch(zero())},
+});
+const CounterContainer = connect(mapStateToProps, mapDispatchToProps)(Counter);
 
 export default class Countly extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
-  }
+    render() {
+        return (
+            <Provider store={store}>
+                <CounterContainer />
+            </Provider>
+        );
+    }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
 
 AppRegistry.registerComponent('Countly', () => Countly);
