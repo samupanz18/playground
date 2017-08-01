@@ -4,14 +4,14 @@ const merge = require('webpack-merge');
 const parts = require('./webpack.parts');
 
 const PATHS = {
-    app: path.join(__dirname, 'app'),
+    src: path.join(__dirname, 'src'),
     build: path.join(__dirname, 'build'),
 };
 
 const commonConfig = merge([
     {
         entry: {
-            app: PATHS.app,        
+            app: PATHS.src,        
         },
         output: {
             path: PATHS.build,
@@ -19,23 +19,23 @@ const commonConfig = merge([
         },
         plugins: [
             new HtmlWebpackPlugin({
-                title: 'Family',
-                template: './app/templates/index.ejs',
+                title: 'Todos',
+                template: path.join(PATHS.src, 'templates/index.ejs'),
             }),
         ],
     },
-    parts.lintJavaScript({include: PATHS.app}),
+    parts.lintJavaScript({include: PATHS.src}),
     parts.loadCSS({}),
     parts.transpile(),
 ]);
 
 const productionConfig = merge([]);
 const developmentConfig = merge([
-    parts.devtool(),
     parts.devServer({
         host: process.env.HOST,
         port: process.env.PORT,
     }),
+    parts.devtool(),
 ]);
 
 module.exports = (env) => {
