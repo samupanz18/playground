@@ -1,0 +1,21 @@
+{
+  "name": "play-es6",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "bluebird": "^3.5.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-root-import": "^5.1.0",
+    "babel-preset-env": "^1.6.0",
+    "del-cli": "^1.1.0"
+  },
+  "scripts": {
+    "prebuild": "del-cli lib -f",
+    "build": "babel src -d lib",
+    "start": "node lib/index.js"
+  }
+}
