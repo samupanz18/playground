@@ -5,10 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "del-cli dist -f",
-    "build": "webpack",
-    "server": "node src/app.js",
-    "start": "npm run build -s && npm run server -s"
+    "prestart": "del-cli dist -f",
+    "start": "webpack-dev-server --open"
   },
   "keywords": [],
   "author": "",
@@ -22,10 +20,10 @@
     "handlebars": "^4.0.10",
     "handlebars-loader": "^1.5.0",
     "html-webpack-plugin": "^2.30.1",
-    "webpack": "^3.4.1"
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^2.6.1"
   },
   "dependencies": {
-    "express": "^4.15.3",
     "lodash": "^4.17.4"
   }
 }
