@@ -20,7 +20,7 @@ const Thumbnail = ({url, titleText, accentColor, style}) => {
         }, style]}>
             {url.length > 0 ? (
                 <Image
-                    style={[styles.image]}
+                    style={[styles.image, imageStyle]}
                     source={{
                         uri: url
                     }}>
