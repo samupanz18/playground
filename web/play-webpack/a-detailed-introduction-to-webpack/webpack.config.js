@@ -1,4 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HelloWorldPlugin = require('./src/HelloWorldPlugin');
+const FileListPlugin = require('./src/FileListPlugin');
 
 var path = require('path');
 
@@ -29,6 +31,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Intro to webpack',
             template: 'src/index.html'
-        })
+        }),
+        new HelloWorldPlugin({options: true}),
+        new FileListPlugin({options: true})
     ]
 };
