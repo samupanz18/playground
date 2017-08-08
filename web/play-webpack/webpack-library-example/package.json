@@ -1,0 +1,15 @@
+{
+  "name": "webpack-library-example",
+  "version": "1.0.0",
+  "main": "dist/webpack-numbers.js",
+  "license": "MIT",
+  "scripts": {
+    "build:node": "webpack && cp dist/webpack-numbers.js examples/node/ && node examples/node/example.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-loader": "^7.1.1",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack": "^3.4.1"
+  }
+}
