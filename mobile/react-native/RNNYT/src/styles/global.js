@@ -18,7 +18,7 @@ export const COMMON_STYLES = StyleSheet.create({
     pageContainer: {
         backgroundColor: BG_COLOR,
         flex: 1,
-        marginTop: 50,
+        // marginTop: 50,
         paddingTop: 20,
         marginBottom: 48,
         marginHorizontal: 0,

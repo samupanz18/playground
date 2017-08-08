@@ -1,5 +1,11 @@
 const contentNode = document.getElementById('contents');
-const continents = ['Africa', 'America', 'Asia', 'Australia', 'Europe'];
-const message = continents.map(c => `Hello ${c}!`).join('<br/>');
-var component = <h1 dangerouslySetInnerHTML={{__html: message}} />;
-ReactDOM.render(component, contentNode);
+
+class IssueList extends React.Component {
+    render() {
+        return (
+            <div>This is a placeholder for the issue list.</div>
+        );
+    }
+}
+
+ReactDOM.render(<IssueList />, contentNode);
