@@ -1,0 +1,16 @@
+{
+  "name": "reselect-basic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "reselect": "^3.0.1"
+  },
+  "scripts": {
+    "start": "babel-node --presets es2015 index.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
