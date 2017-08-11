@@ -7,6 +7,7 @@ export default () => (
         output: {
             path: path.resolve(__dirname, './dist'),
             filename: '[name].js',
+            publicPath: '/',
         },
         module: {
             rules: [
@@ -16,7 +17,7 @@ export default () => (
         plugins: [
             new HtmlWebpackPlugin({
                 title: 'Learn History',
-                template: 'src/index.html'                
+                template: 'src/index.html'
             }),
         ],
         devServer: {

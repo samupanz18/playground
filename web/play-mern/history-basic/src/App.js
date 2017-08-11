@@ -4,7 +4,7 @@ import createHistory from 'history/createBrowserHistory';
 import Page from './Page';
 
 const history = createHistory({
-    basename: '/index.html'
+    basename: '/learn-history'
 });
 
 class App extends React.Component {
@@ -54,13 +54,13 @@ const Menu = props => {
     return (
         <ul>
             <li>
-                <a href="#" onClick={showPageA}>Page A</a>
+                <a href="javascript:void(0);" onClick={showPageA}>Page A</a>
             </li>
             <li>
-                <a href="#" onClick={showPageB}>Page B</a>
+                <a href="javascript:void(0);" onClick={showPageB}>Page B</a>
             </li>
             <li>
-                <a href="#" onClick={showPageC}>Page C</a>
+                <a href="javascript:void(0);" onClick={showPageC}>Page C</a>
             </li>
         </ul>        
     );
