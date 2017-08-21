@@ -16,7 +16,6 @@ const commonConfig = merge([
         output: {
             path: PATHS.build,
             filename: '[name].js',
-            libraryTarget: 'amd',
         },
         plugins: [
             new HtmlWebpackPlugin({

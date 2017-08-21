@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --watch webpack.config.js --exec \"webpack-dev-server --env development\"",
+    "start": "nodemon --watch webpack.config.js --exec \"cross-env PORT=3000 webpack-dev-server --env development\"",
     "build": "webpack --env production",
     "lint:js": "eslint app/ webpack.*.js --cache",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^5.0.5",
     "css-loader": "^0.28.2",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
