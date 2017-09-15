@@ -5,109 +5,109 @@ import Promise from 'bluebird';
 
 const NOOP = () => {};
 
+let taskId = 0;
+
+const generateTaskId = () => ++taskId;
+
 const taskRunner = (() => {
+    // A task execution is a sequence of work and wait
     const executions = {};
 
     const runTask = task => {
-        const execution = executions[task];
+        const execution = executions[task.id];
 
         if (execution) {
             return;
         }
 
-        executions[task] = {
-            timeoutId: null,
+        executions[task.id] = {
+            // records the id of the latest wait in the exeuction
+            waitId: null, 
+            
+            interrupted: false,
         };
 
-        checkComplete(task, () => {
+        propelTask(task, () => {
             Promise.resolve(task.onStart())
                 .then(() => {
                     if (task.immediate) {
-                        return task.onExecute();
+                        return task.onWork();
                     }
                 })
-                .then(killed => {
-                    !killed && checkCompleteLoop(task);
+                .then(() => {
+                    runTaskCycle(task);
                 });
         });
     };
 
-    const checkComplete = (task, onProgress) => {
-        const execution = executions[task];
+    const propelTask = (task, onProgress = NOOP) => {
+        const execution = executions[task.id];
 
         if (!execution) {
             return;
         }
 
+        if (execution.interrupted) {
+            task.onInterrupted();
+            return;
+        }
+
         Promise.resolve(task.isComplete())
             .then(complete => {
-                if (complete) {
-                    removeExecution(task);
-                    task.onComplete();
-                } else {
-                    onProgress();
-                }
+                complete ? task.onComplete() : onProgress();
             });
     };
 
-    const checkCompleteLoop = task => {
-        checkComplete(task, () => {
-            suspendTask(task)
+    // A task cycle is a wait followed by a work
+    const runTaskCycle = task => {
+        propelTask(task, () => {
+            makeTaskWait(task)
                 .then(() => {
-                    checkComplete(task, () => {
-                        Promise.resolve(task.onExecute())
-                            .then(killed => {
-                                !killed ? checkCompleteLoop(task) : task.onKill();
+                    propelTask(task, () => {
+                        Promise.resolve(task.onWork())
+                            .then(() => {
+                                runTaskCycle(task);
                             });
                     });
                 });
         });
     }
 
-    const suspendTask = task => Promise.fromCallback(cb => {
-        const timeoutId = setTimeout(cb, task.timeSuspended);
+    const makeTaskWait = task => Promise.fromCallback(cb => {
+        executions[task.id].waitId = setTimeout(cb, task.waitTime);
+    })
+        .then(() => {
+            executions[task.id].waitId = null;
+        });
 
-        executions[task] = {
-            timeoutId,
-        };
-    });
+    const interruptTask = task => {
+        const execution = executions[task.id];
 
-    const removeExecution = task => {
-        const execution = executions[task];
-
-        if (!execution) {
+        if (!execution || execution.interrupted) {
             return;
         }
+
+        execution.interrupted = true;
 
         const {
-            timeoutId,
+            waitId,
         } = execution;
 
-        if (!_.isNil(timeoutId)) {
-            clearTimeout(timeoutId);
+        if (!_.isNil(waitId)) {
+            clearTimeout(waitId);
+            executions[task.id].waitId = null;
+            propelTask(task);
         }
-
-        executions[task] = null;
     };
 
-    const killTask = task => {
-        const execution = executions[task];
-
-        if (!execution) {
-            return;
-        }
-
-        return Promise.resolve(task.isComplete())
-            .then(complete => {
-                if (!complete) {
-                    removeExecution(task);
-                }
-            });
-    };
+    const resetTask = task => {
+        executions[task.id] = null;
+    }
 
     return {
         runTask,
-        killTask,
+        interruptTask,
+        resetTask,
     };
 })();
 
@@ -116,18 +116,19 @@ const taskRunner = (() => {
  */
 export default class Task {
     constructor() {
+        this.id = generateTaskId();
         this.name = 'Anonymous';
-        this.timeSuspended = 1000;
-        // Control whether to exeucte the task at once
+        this.waitTime = 1000;
+        // Control whether to make the task work at once
         this.immediate = false;
     }
 
-    get timeSuspended() {
-        return this._timeSuspended;
+    get waitTime() {
+        return this._waitTime;
     }
 
-    set timeSuspended(timeSuspended) {
-        this._timeSuspended = timeSuspended;
+    set waitTime(waitTime) {
+        this._waitTime = waitTime;
     }
 
     get immediate() {
@@ -142,11 +143,8 @@ export default class Task {
         NOOP();
     }
 
-    /**
-     * Returns whether the task has been killed or not.
-     */
-    onExecute() {
-        return false;
+    onWork() {
+        NOOP();
     }
 
     isComplete() {
@@ -157,7 +155,7 @@ export default class Task {
         NOOP();
     }
 
-    onKill() {
+    onInterrupted() {
         NOOP();
     }
 
@@ -165,8 +163,12 @@ export default class Task {
         taskRunner.runTask(this);
     }
 
-    killMe() {
-        return taskRunner.killTask(this);
+    interrupt() {
+        taskRunner.interruptTask(this);
+    }
+
+    reset() {
+        taskRunner.resetTask(this);
     }
 }
 
@@ -181,10 +183,8 @@ export class CountdownTask extends Task {
         this.currentNumber = fromNumber;
     }
 
-    onExecute() {
+    onWork() {
         this.currentNumber += this.step;
-
-        return false;
     }
 
     isComplete() {
@@ -192,6 +192,8 @@ export class CountdownTask extends Task {
     }
 
     reset() {
+        super.reset();
+
         this.currentNumber = this.fromNumber;
     }
 }
