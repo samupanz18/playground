@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Align at Horizontal Center</title>
+    <link rel="stylesheet" href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+    <style type="text/css">   
+        .WithMargin {
+            margin: 20px;
+        }     
+
+        .Logo {
+            background-color: yellow;
+            text-align: left;
+        }
+
+        .LanguageSelector {
+            background-color: yellow;
+            text-align: right;
+        }
+
+        .Footer {
+            background-color: brown;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+
+        }
+
+        .RingMeMakeCallContent {
+            background-color: green;
+        }
+
+        @media screen and (min-width: 498px) {
+            .RingMeMakeCallContent {
+                width: 458px;
+                position: relative;
+                left: 50%;
+                margin-left: -229px;                
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="WithMargin">
+                    <div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="Logo">
+                                    Logo
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="LanguageSelector">
+                                    Language Selector
+                                </div>
+                            </div>
+                        </div>
+                        <div class="RingMeMakeCallContent">
+                                RingMe Make Call UI
+                        </div>
+                        <div class="Footer">
+                            RingCentral inc.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+</body>
+</html>
