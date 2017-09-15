@@ -1,0 +1,20 @@
+{
+  "name": "test-binary-task",
+  "version": "1.0.0",
+  "description": "Test the BinaryTask utility",
+  "main": "index.js",
+  "author": "Samuel Gong",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "lodash": "^4.17.4"
+  },
+  "scripts": {
+    "start": "babel-node index.js",
+    "start:debug": "babel-node --inspect --debug-brk index.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0"
+  }
+}
