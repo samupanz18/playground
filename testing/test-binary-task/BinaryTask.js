@@ -229,12 +229,13 @@ export default class Task {
 }
 
 export class CountdownTask extends Task {
-    constructor(fromNumber = 10, toNumber = 0) {
+    constructor(fromNumber = 10, toNumber = 0, step = -1) {
         super();
 
         this.name = 'Countdown';
         this.fromNumber = fromNumber;
         this.toNumber = toNumber;
+        this.step = step;
         this.currentNumber = fromNumber;
     }
 
@@ -244,6 +245,11 @@ export class CountdownTask extends Task {
 
     set fromNumber(fromNumber) {
         this.prohibitIfRunning();
+
+        if (fromNumber <= this.toNumber) {
+            throw new Error('The fromNumber must be greater than the toNumber');
+        }
+
         this._fromNumber = fromNumber;
         this.reset();
     }
@@ -254,15 +260,26 @@ export class CountdownTask extends Task {
 
     set toNumber(toNumber) {
         this.prohibitIfRunning();
+
+        if (toNumber >= this.fromNumber) {
+            throw new Error('The toNumber must be less than the fromNumber');
+        }
+
         this._toNumber = toNumber;
     }
 
     get step() {
-        return this.fromNumber >= this.toNumber ? -1 : 1;
+        return this._step;
     }
 
     set step(step) {
-        throw new Error('The step property is read only');
+        this.prohibitIfRunning();
+
+        if (step >= 0) {
+            throw new Error('The step must be less than 0');
+        }
+        
+        this._step = step;
     }
 
     onWork(done) {
@@ -271,7 +288,7 @@ export class CountdownTask extends Task {
     }
 
     onCheckComplete(done) {
-        const complete = this.currentNumber === this.toNumber;
+        const complete = this.currentNumber <= this.toNumber;
 
         done(complete);
     }

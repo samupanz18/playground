@@ -15,7 +15,7 @@ class MyCountdownTask extends CountdownTask {
             super.onWork(done);
         })
             .then(() => {
-                if (this.currentNumber === 5) {
+                if (this.currentNumber <= 5) {
                     this.interrupt();
                 } else {
                     this.showCurrentNumber();
@@ -53,7 +53,8 @@ class MyCountdownTask extends CountdownTask {
     }
 }
 
-const task = new MyCountdownTask(10, 0);
+const task = new MyCountdownTask(5, 0);
+task.waitTime = 10000;
 // task.timeSuspended = 5000;
 
 const task2 = new MyCountdownTask(20, 10);
