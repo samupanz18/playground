@@ -10,7 +10,7 @@ let taskId = 0;
 const generateTaskId = () => ++taskId;
 
 const taskRunner = (() => {
-    // A task execution is a sequence of work and wait
+    // Records task running information
     const executions = {};
 
     const runTask = task => {
@@ -22,19 +22,19 @@ const taskRunner = (() => {
 
         executions[task.id] = {
             // records the id of the latest wait in the exeuction
-            waitId: null, 
-            
+            waitId: null,
+
             interrupted: false,
         };
 
         propelTask(task, () => {
-            Promise.fromCallback(cb => {
-                task.onStart(cb);
+            invokeTaskCallback(done => {
+                task.onStart(done);
             })
                 .then(() => {
                     if (task.immediate) {
-                        return Promise.fromCallback(cb => {
-                            task.onWork(cb);
+                        return invokeTaskCallback(done => {
+                            task.onWork(done);
                         });
                     }
                 })
@@ -52,13 +52,22 @@ const taskRunner = (() => {
         }
 
         if (execution.interrupted) {
+            removeTask(task);
             task.onInterrupted();
+
             return;
         }
 
-        Promise.resolve(task.isComplete())
+        invokeTaskCallback(done => {
+            task.onCheckComplete(done);
+        })
             .then(complete => {
-                complete ? task.onComplete() : onProgress();
+                if (complete) {
+                    removeTask(task);
+                    task.onComplete();
+                } else {
+                    onProgress();
+                }
             });
     };
 
@@ -68,8 +77,8 @@ const taskRunner = (() => {
             makeTaskWait(task)
                 .then(() => {
                     propelTask(task, () => {
-                        Promise.fromCallback(cb => {
-                            task.onWork(cb);
+                        invokeTaskCallback(done => {
+                            task.onWork(done);
                         })
                             .then(() => {
                                 runTaskCycle(task);
@@ -106,27 +115,56 @@ const taskRunner = (() => {
         }
     };
 
-    const resetTask = task => {
+    const removeTask = task => {
         executions[task.id] = null;
     }
+
+    const isTaskRunning = task => !!executions[task];
+
+    const invokeTaskCallback = taskCallback => Promise.fromCallback(cb => {
+        const done = (...args) => {
+            cb(null, ...args);
+        };
+
+        taskCallback(done);
+    });
 
     return {
         runTask,
         interruptTask,
-        resetTask,
+        isTaskRunning,
+        invokeTaskCallback,
     };
 })();
 
 /**
- * A binary task is either executing or being suspended.
+ * A binary task starts and then it works and waits alternatively until it is complete.
+ * It executes in two modes:
+ * 1. Normal mode
+ *                   works       works       works
+ * starts then      |     |     |     |     |
+ *             waits       waits       waits      ...completes
+ * 2. Immediate mode
+ *             works       works       works       works
+ * starts then      |     |     |     |     |     |
+ *                   waits       waits       waits      ...completes
+ *
  */
 export default class Task {
     constructor() {
-        this.id = generateTaskId();
+        this._id = generateTaskId();
         this.name = 'Anonymous';
         this.waitTime = 1000;
         // Control whether to make the task work at once
         this.immediate = false;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    set id(id) {
+        throw new Error('The id property is read only');
     }
 
     get waitTime() {
@@ -134,6 +172,7 @@ export default class Task {
     }
 
     set waitTime(waitTime) {
+        this.prohibitIfRunning();
         this._waitTime = waitTime;
     }
 
@@ -142,6 +181,7 @@ export default class Task {
     }
 
     set immediate(immediate) {
+        this.prohibitIfRunning();
         this._immediate = immediate;
     }
 
@@ -153,8 +193,8 @@ export default class Task {
         done();
     }
 
-    isComplete() {
-        return true;
+    onCheckComplete(done) {
+        done(true);
     }
 
     onComplete() {
@@ -173,8 +213,18 @@ export default class Task {
         taskRunner.interruptTask(this);
     }
 
-    reset() {
-        taskRunner.resetTask(this);
+    isRunning() {
+        return taskRunner.isTaskRunning(this);
+    }
+
+    invokeCallback(callback) {
+        return taskRunner.invokeTaskCallback(callback);
+    }
+
+    prohibitIfRunning() {
+        if (this.isRunning()) {
+            throw new Error('The operation is prohibited when the task is running');
+        }
     }
 }
 
@@ -185,8 +235,34 @@ export class CountdownTask extends Task {
         this.name = 'Countdown';
         this.fromNumber = fromNumber;
         this.toNumber = toNumber;
-        this.step = fromNumber >= toNumber ? -1 : 1;
         this.currentNumber = fromNumber;
+    }
+
+    get fromNumber() {
+        return this._fromNumber;
+    }
+
+    set fromNumber(fromNumber) {
+        this.prohibitIfRunning();
+        this._fromNumber = fromNumber;
+        this.reset();
+    }
+
+    get toNumber() {
+        return this._toNumber;
+    }
+
+    set toNumber(toNumber) {
+        this.prohibitIfRunning();
+        this._toNumber = toNumber;
+    }
+
+    get step() {
+        return this.fromNumber >= this.toNumber ? -1 : 1;
+    }
+
+    set step(step) {
+        throw new Error('The step property is read only');
     }
 
     onWork(done) {
@@ -194,13 +270,14 @@ export class CountdownTask extends Task {
         done();
     }
 
-    isComplete() {
-        return this.currentNumber === this.toNumber;
+    onCheckComplete(done) {
+        const complete = this.currentNumber === this.toNumber;
+
+        done(complete);
     }
 
     reset() {
-        super.reset();
-
+        this.prohibitIfRunning();
         this.currentNumber = this.fromNumber;
     }
 }

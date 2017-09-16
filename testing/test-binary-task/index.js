@@ -10,26 +10,31 @@ class MyCountdownTask extends CountdownTask {
         done();
     }
 
-    // onWork() {
-    //     return Promise.resolve(super.onWork())
-    //         .then(() => {
-    //             if (this.currentNumber === 5) {                
-    //                 this.interrupt();
-    //             } else {
-    //                 this.showCurrentNumber();
-    //             }
-    //         });
-    // }
-
     onWork(done) {
-        return Promise.fromCallback(cb => {
-            super.onWork(cb);
+        this.invokeCallback(done => {
+            super.onWork(done);
         })
             .then(() => {
-                this.showCurrentNumber();
-                done();
+                if (this.currentNumber === 5) {
+                    this.interrupt();
+                } else {
+                    this.showCurrentNumber();
+                }
             })
+            .then(() => {
+                done();
+            });
     }
+
+    // onWork(done) {
+    //     this.invokeCallback(done => {
+    //         super.onWork(done);
+    //     })
+    //         .then(() => {
+    //             this.showCurrentNumber();
+    //             done();
+    //         })
+    // }
 
     onComplete() {
         console.log('Countdown is complete');
