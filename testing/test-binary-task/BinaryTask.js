@@ -28,10 +28,14 @@ const taskRunner = (() => {
         };
 
         propelTask(task, () => {
-            Promise.resolve(task.onStart())
+            Promise.fromCallback(cb => {
+                task.onStart(cb);
+            })
                 .then(() => {
                     if (task.immediate) {
-                        return task.onWork();
+                        return Promise.fromCallback(cb => {
+                            task.onWork(cb);
+                        });
                     }
                 })
                 .then(() => {
@@ -64,7 +68,9 @@ const taskRunner = (() => {
             makeTaskWait(task)
                 .then(() => {
                     propelTask(task, () => {
-                        Promise.resolve(task.onWork())
+                        Promise.fromCallback(cb => {
+                            task.onWork(cb);
+                        })
                             .then(() => {
                                 runTaskCycle(task);
                             });
@@ -139,12 +145,12 @@ export default class Task {
         this._immediate = immediate;
     }
 
-    onStart() {
-        NOOP();
+    onStart(done) {
+        done();
     }
 
-    onWork() {
-        NOOP();
+    onWork(done) {
+        done();
     }
 
     isComplete() {
@@ -183,8 +189,9 @@ export class CountdownTask extends Task {
         this.currentNumber = fromNumber;
     }
 
-    onWork() {
+    onWork(done) {
         this.currentNumber += this.step;
+        done();
     }
 
     isComplete() {

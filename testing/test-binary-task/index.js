@@ -1,11 +1,13 @@
+import Promise from 'bluebird';
 import {
     CountdownTask,
 } from './BinaryTask';
 
 class MyCountdownTask extends CountdownTask {
-    onStart() {
+    onStart(done) {
         console.log('Start countdown');
         this.showCurrentNumber();
+        done();
     }
 
     // onWork() {
@@ -19,11 +21,14 @@ class MyCountdownTask extends CountdownTask {
     //         });
     // }
 
-    onWork() {
-        return Promise.resolve(super.onWork())
+    onWork(done) {
+        return Promise.fromCallback(cb => {
+            super.onWork(cb);
+        })
             .then(() => {
                 this.showCurrentNumber();
-            });
+                done();
+            })
     }
 
     onComplete() {
@@ -49,4 +54,4 @@ const task = new MyCountdownTask(10, 0);
 const task2 = new MyCountdownTask(20, 10);
 
 task.run();
-task2.run();
+// task2.run();
