@@ -251,7 +251,7 @@ export class CountdownTask extends Task {
         }
 
         this._fromNumber = fromNumber;
-        this.reset();
+        this._currentNumber = fromNumber;
     }
 
     get toNumber() {
@@ -282,6 +282,14 @@ export class CountdownTask extends Task {
         this._step = step;
     }
 
+    get currentNumber() {
+        return this._currentNumber;
+    }
+
+    set currentNumber(currentNumber) {
+        throw new Error('The currentNumber is read only');
+    }
+
     onWork(done) {
         this.currentNumber += this.step;
         done();
@@ -295,6 +303,6 @@ export class CountdownTask extends Task {
 
     reset() {
         this.prohibitIfRunning();
-        this.currentNumber = this.fromNumber;
+        this._currentNumber = this.fromNumber;
     }
 }
